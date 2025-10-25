@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ma.enset</groupId>
-    <artifactId>customer-service</artifactId>
+    <artifactId>inventory-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>customer-service</name>
-    <description>customer-service</description>
+    <name>inventory-service</name>
+    <description>inventory-service</description>
     <url/>
     <licenses>
         <license/>
