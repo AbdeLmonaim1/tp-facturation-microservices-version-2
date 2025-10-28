@@ -34,6 +34,10 @@ public class BillServiceImpl implements BillService {
     public BillResponseDTO createBill(BillRequestDTO billRequestDTO) throws ProductNotFoundException, CustomerNotFoundException {
         Bill bill = billMapper.toEntity(billRequestDTO);
         bill.setBillingDate(billRequestDTO.getBillingDate()==null?new Date():billRequestDTO.getBillingDate());
+        Customer customer = customerRestClient.getCustomerById(bill.getCustomerId());
+        if (customer == null) throw new CustomerNotFoundException("Customer not found with id: " + bill.getCustomerId());
+        bill.setCustomerId(customer.getId());
+        billRepository.save(bill);
         for (ProductItem productItem : bill.getProductItems()) {
             Product product = productRestClient.getProductById(productItem.getProductId());
             if (product == null) throw new ProductNotFoundException("Product not found with id: " + productItem.getProductId());
@@ -41,21 +45,19 @@ public class BillServiceImpl implements BillService {
             productItem.setBill(bill);
             productItemRepository.save(productItem);
         }
-        Customer customer = customerRestClient.getCustomerById(bill.getCustomerId());
-        if (customer == null) throw new CustomerNotFoundException("Customer not found with id: " + bill.getCustomerId());
-        bill.setCustomerId(customer.getId());
-        billRepository.save(bill);
         return billMapper.toResponseDTO(bill,customerResolver,productResolver);
     }
 
     @Override
     public BillResponseDTO getBillById(Long id) {
-        return null;
+        Bill bill = billRepository.findById(id).orElseThrow(() -> new RuntimeException("Bill not found"));
+        return billMapper.toResponseDTO(bill,customerResolver,productResolver);
     }
 
     @Override
     public List<BillResponseDTO> getAllBills() {
-        return List.of();
+        List<Bill> bills = billRepository.findAll();
+        return billMapper.toResponseDTOList(bills,customerResolver,productResolver);
     }
 
     @Override

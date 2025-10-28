@@ -11,7 +11,7 @@ public class ProductResolver {
     public ProductResolver(ProductRestClient productRestClient) {
         this.productRestClient = productRestClient;
     }
-    Product resolveProduct(String productId) {
+    Product resolve(String productId) {
         return productRestClient.getProductById(productId);
     }
 }

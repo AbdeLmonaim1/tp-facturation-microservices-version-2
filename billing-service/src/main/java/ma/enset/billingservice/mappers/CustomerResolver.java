@@ -12,7 +12,7 @@ public class CustomerResolver {
     public CustomerResolver(CustomerRestClient customerRestClient) {
         this.customerRestClient = customerRestClient;
     }
-    Customer resolveCustomer(Long customerId){
+    Customer resolve(Long customerId){
         return customerRestClient.getCustomerById(customerId);
     }
 
