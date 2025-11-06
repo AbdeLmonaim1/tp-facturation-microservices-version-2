@@ -1,0 +1,29 @@
+<div class="p-4 bg-light">
+  <table class="table table-primary table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Qte Stock</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let prod of products">
+      <td>{{ prod.id }}/td>
+      <td>{{prod.name}}</td>
+      <td>{{prod.price}}</td>
+      <td>{{prod.quantity}}</td>
+      <td>
+                <span class="btn btn-outline-info me-2">
+                    <i class="bi bi-pencil-fill" aria-hidden="true"></i>
+              </span>
+              <span class="btn btn-outline-danger">
+                    <i class="bi bi-trash-fill" aria-hidden="true"></i>
+              </span>
+
+      </td>
+    </tr>
+  </table>
+</div>
