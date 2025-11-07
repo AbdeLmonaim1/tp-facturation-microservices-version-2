@@ -5,6 +5,7 @@ import ma.enset.inventoryservice.dtos.ProductRequestDTO;
 import ma.enset.inventoryservice.dtos.ProductResponseDTO;
 import ma.enset.inventoryservice.exceptions.ProductNotFoundException;
 import ma.enset.inventoryservice.service.ProductService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponseDTO createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
         return productService.createProduct(productRequestDTO);
     }
