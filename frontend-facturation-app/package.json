@@ -30,6 +30,8 @@
     "@fortawesome/fontawesome-free": "^7.1.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
+    "keycloak-angular": "^20.0.0",
+    "keycloak-js": "^26.1.2",
     "ngx-toastr": "^19.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

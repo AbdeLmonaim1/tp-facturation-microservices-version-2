@@ -1,29 +1,77 @@
-<div class="p-4 bg-light">
-  <table class="table table-primary table-striped">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Name</th>
-      <th scope="col">Price</th>
-      <th scope="col">Qte Stock</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let prod of products">
-      <td>{{ prod.id }}/td>
-      <td>{{prod.name}}</td>
-      <td>{{prod.price}}</td>
-      <td>{{prod.quantity}}</td>
-      <td>
-                <span class="btn btn-outline-info me-2">
-                    <i class="bi bi-pencil-fill" aria-hidden="true"></i>
-              </span>
-              <span class="btn btn-outline-danger">
-                    <i class="bi bi-trash-fill" aria-hidden="true"></i>
-              </span>
+<!--<div class="p-4 bg-light">-->
+<!--  <table class="table table-primary table-striped">-->
+<!--  <thead>-->
+<!--    <tr>-->
+<!--      <th scope="col">ID</th>-->
+<!--      <th scope="col">Name</th>-->
+<!--      <th scope="col">Price</th>-->
+<!--      <th scope="col">Qte Stock</th>-->
+<!--      <th>Actions</th>-->
+<!--    </tr>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--    <tr *ngFor="let prod of products">-->
+<!--      <td>{{ prod.id }}/td>-->
+<!--      <td>{{prod.name}}</td>-->
+<!--      <td>{{prod.price}}</td>-->
+<!--      <td>{{prod.quantity}}</td>-->
+<!--      <td>-->
+<!--                <span class="btn btn-outline-info me-2">-->
+<!--                    <i class="bi bi-pencil-fill" aria-hidden="true"></i>-->
+<!--              </span>-->
+<!--              <span class="btn btn-outline-danger">-->
+<!--                    <i class="bi bi-trash-fill" aria-hidden="true"></i>-->
+<!--              </span>-->
 
-      </td>
-    </tr>
-  </table>
+<!--      </td>-->
+<!--    </tr>-->
+<!--  </table>-->
+<!--</div>-->
+
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary">Liste des produits</h2>
+    <button class="btn btn-success" routerLink="/add-product">
+      <i class="bi bi-plus-circle me-2"></i>Ajouter un produit
+    </button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0">
+          <thead class="table-dark">
+          <tr>
+            <th scope="col" class="text-center">ID</th>
+            <th scope="col">Nom</th>
+            <th scope="col" class="text-center">Prix</th>
+            <th scope="col" class="text-center">Qté Stock</th>
+            <th scope="col" class="text-center">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let prod of products">
+            <td class="text-center fw-bold">{{ prod.id }}</td>
+            <td>{{prod.name}}</td>
+            <td class="text-center">{{prod.price | currency:'EUR'}}</td>
+            <td class="text-center">
+                <span class="badge" [ngClass]="prod.quantity > 10 ? 'bg-success' : 'bg-warning'">
+                  {{prod.quantity}}
+                </span>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-outline-info btn-sm me-2">
+                <i class="bi bi-pencil-fill" aria-hidden="true"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash-fill" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

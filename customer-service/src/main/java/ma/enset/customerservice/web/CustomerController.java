@@ -5,6 +5,7 @@ import ma.enset.customerservice.dtos.CustomerRequestDTO;
 import ma.enset.customerservice.dtos.CustomerResponseDTO;
 import ma.enset.customerservice.exceptions.CustomerNotFoundException;
 import ma.enset.customerservice.service.CustomerService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerResponseDTO createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
         return customerService.createCustomer(customerRequestDTO);
     }
