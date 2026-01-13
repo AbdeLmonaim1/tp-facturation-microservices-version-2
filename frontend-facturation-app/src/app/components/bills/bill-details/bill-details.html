@@ -1,0 +1,134 @@
+<div class="container mt-4">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading bill details...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+        <button type="button" class="btn btn-sm btn-secondary ms-3" (click)="goBack()">
+            <i class="bi bi-arrow-left"></i> Go Back
+        </button>
+    </div>
+
+    <!-- Bill Details -->
+    <div *ngIf="!loading && !errorMessage && bill" class="card shadow-lg bill-container">
+        <div class="card-header bg-gradient-info text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-file-earmark-text"></i> Bill Details #{{ bill.id }}</h3>
+                <div class="no-print">
+                    <button class="btn btn-light me-2" (click)="printBill()">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button class="btn btn-outline-light" (click)="goBack()">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Bill Header Info -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <h5 class="text-muted mb-3"><i class="bi bi-calendar-event"></i> Bill Information</h5>
+                        <p><strong>Bill ID:</strong> #{{ bill.id }}</p>
+                        <p><strong>Date:</strong> {{ formatDate(bill.billingDate) }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <h5 class="text-muted mb-3"><i class="bi bi-person"></i> Customer Information</h5>
+                        <div *ngIf="bill.customer">
+                            <p><strong>Name:</strong> {{ bill.customer.name }}</p>
+                            <p><strong>Email:</strong> {{ bill.customer.email }}</p>
+                        </div>
+                        <div *ngIf="!bill.customer">
+                            <p class="text-muted">Customer ID: {{ bill.customerId }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Product Items Table -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-3"><i class="bi bi-cart"></i> Product Items</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of bill.productItems; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td>
+                                    <div *ngIf="item.product">
+                                        <strong>{{ item.product.name }}</strong><br>
+                                        <small class="text-muted">ID: {{ item.productId }}</small>
+                                    </div>
+                                    <div *ngIf="!item.product">
+                                        <span class="text-muted">Product ID: {{ item.productId }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">{{ item.quantity }}</span>
+                                </td>
+                                <td class="text-end">{{ item.unitPrice | number:'1.2-2' }} MAD</td>
+                                <td class="text-end">
+                                    <strong>{{ calculateItemTotal(item.unitPrice, item.quantity) | number:'1.2-2' }}
+                                        MAD</strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>Grand Total:</strong></td>
+                                <td class="text-end">
+                                    <strong class="text-success fs-4">{{ calculateGrandTotal() | number:'1.2-2' }}
+                                        MAD</strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Summary Card -->
+            <div class="row">
+                <div class="col-md-4 ms-auto">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">Summary</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Items:</span>
+                                <strong>{{ bill.productItems?.length || 0 }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Quantity:</span>
+                              <strong>{{ getTotalQuantity() }}</strong>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Grand Total:</strong>
+                                <strong class="text-success">{{ calculateGrandTotal() | number:'1.2-2' }} MAD</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

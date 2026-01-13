@@ -12,6 +12,8 @@ RUN npm run build
 #Stage 2: Serve the application with Nginx
 #We will use an official Nginx image as a base image
 FROM nginx:latest
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 #Copy the build files from the previous stage to the Nginx html directory
 COPY --from=build /usr/local/app/dist/frontend-facturation-app/browser /usr/share/nginx/html
 #Expose port 80 to access the application

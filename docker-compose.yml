@@ -46,9 +46,13 @@ services:
     environment:
       - DISCOVERY_SERVICE_URL=http://enset-discovery-service:8761/eureka
       - CONFIG_SERVER_URL=http://enset-config-server:9999
+      - KEYCLOAK_ISSUER_URL=http://localhost:8080/realms/tp-facturation-realm
+      - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
     depends_on:
         enset-config-server:
             condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   enset-customer-service:
     build: ./customer-service
     container_name: enset-customer-service
@@ -64,9 +68,13 @@ services:
     environment:
       - DISCOVERY_SERVICE_URL=http://enset-discovery-service:8761/eureka
       - CONFIG_SERVER_URL=http://enset-config-server:9999
+      - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
+      - KEYCLOAK_ISSUER_URI=http://localhost:8080/realms/tp-facturation-realm
     depends_on:
         enset-config-server:
             condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   enset-billing-service:
     build: ./billing-service
     container_name: enset-billing-service
@@ -77,11 +85,15 @@ services:
     environment:
       - DISCOVERY_SERVICE_URL=http://enset-discovery-service:8761/eureka
       - CONFIG_SERVER_URL=http://enset-config-server:9999
+      - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
+      - KEYCLOAK_ISSUER_URI=http://localhost:8080/realms/tp-facturation-realm
     depends_on:
       enset-customer-service:
         condition: service_healthy
       enset-inventory-service:
         condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   enset-gateway-service:
     build: ./api-gateway-service
     container_name: enset-gateway-service
@@ -92,9 +104,13 @@ services:
     environment:
       - DISCOVERY_SERVICE_URL=http://enset-discovery-service:8761/eureka
       - CONFIG_SERVER_URL=http://enset-config-server:9999
+      - KEYCLOAK_ISSUER_URI=http://localhost:8080/realms/tp-facturation-realm
+      - KEYCLOAK_JWK_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
     depends_on:
       enset-config-server:
         condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   angular-frontend-facturation-app:
     build: ./frontend-facturation-app
     container_name: angular-frontend-facturation-app
@@ -102,3 +118,65 @@ services:
       - '80:80'
     expose:
       - '80'
+  postgres-service:
+    image: postgres:16-alpine
+    container_name: postgres-service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: k1234
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "7777:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: monaim@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: post-monaim
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.2
+    container_name: keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-service:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: k1234
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: 'true'
+      KC_HTTP_ENABLED: 'true'
+    command:
+      - start-dev
+    restart: always
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+    healthcheck:
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '200 OK'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      postgres-service:
+        condition: service_healthy
+volumes:
+  postgres_data:
+  pgadmin_data:

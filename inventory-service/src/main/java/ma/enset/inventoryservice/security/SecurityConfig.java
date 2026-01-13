@@ -34,15 +34,5 @@ public class SecurityConfig {
                 .oauth2ResourceServer(o2->o2.jwt(jwt ->jwt.jwtAuthenticationConverter(jwtAuthConverter)))
                 .build();
     }
-    //Voici comment regler le probleme de CORS origin
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("*"));
-//        configuration.setAllowedMethods(Arrays.asList("*"));
-//        configuration.setAllowedHeaders(Arrays.asList("*"));
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
+
 }

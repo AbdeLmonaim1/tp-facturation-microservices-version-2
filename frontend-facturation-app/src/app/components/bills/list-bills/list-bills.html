@@ -1,0 +1,77 @@
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-gradient-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-receipt"></i> Bills Management</h3>
+                <button class="btn btn-light" (click)="createNewBill()">
+                    <i class="bi bi-plus-circle"></i> Create New Bill
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Loading bills...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+            </div>
+
+            <!-- Bills Table -->
+            <div *ngIf="!loading && !errorMessage">
+                <div *ngIf="bills.length === 0" class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="mt-3 text-muted">No bills found. Create your first bill!</p>
+                </div>
+
+                <div *ngIf="bills.length > 0" class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Bill ID</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let bill of bills" class="bill-row">
+                                <td><strong>#{{ bill.id }}</strong></td>
+                                <td>{{ formatDate(bill.billingDate) }}</td>
+                                <td>
+                                    <div *ngIf="bill.customer">
+                                        <strong>{{ bill.customer.name }}</strong><br>
+                                        <small class="text-muted">{{ bill.customer.email }}</small>
+                                    </div>
+                                    <div *ngIf="!bill.customer">
+                                        <span class="text-muted">Customer #{{ bill.customerId }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ bill.productItems?.length || 0 }} items</span>
+                                </td>
+                                <td>
+                                    <strong class="text-success">{{ calculateTotal(bill) | number:'1.2-2' }}
+                                        MAD</strong>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" (click)="viewBillDetails(bill.id)">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
-.bg-gradient-warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.bg-gradient-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
 .card {
@@ -13,14 +13,28 @@
     border-bottom: none;
 }
 
+.form-select,
 .form-control {
     border-radius: 8px;
     transition: all 0.3s ease;
 }
 
+.form-select:focus,
 .form-control:focus {
-    border-color: #f5576c;
-    box-shadow: 0 0 0 0.2rem rgba(245, 87, 108, 0.25);
+    border-color: #38ef7d;
+    box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.25);
+}
+
+.product-item-row {
+    transition: all 0.3s ease;
+}
+
+.product-item-row:hover {
+    background-color: #f8f9fa;
+}
+
+.table {
+    margin-bottom: 0;
 }
 
 .btn {
@@ -39,11 +53,6 @@
 
 .is-invalid {
     border-color: #dc3545;
-}
-
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
 }
 
 .spinner-border-sm {

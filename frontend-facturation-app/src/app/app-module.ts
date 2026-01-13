@@ -10,23 +10,27 @@ import { App } from './app';
 import { ProductList } from './components/products/product-list/product-list';
 import { AddProducts } from './components/products/add-products/add-products';
 import { UpdateProduct } from './components/products/update-product/update-product';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {RouterModule} from '@angular/router';
-import {AppRoutingModule} from './app-routing-module';
-import {Navbar} from './components/navbar/navbar';
-import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
-import {ReactiveFormsModule} from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+import { AppRoutingModule } from './app-routing-module';
+import { Navbar } from './components/navbar/navbar';
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ListCustomers } from './components/customers/list-customers/list-customers';
 import { AddCustomer } from './components/customers/add-customer/add-customer';
 import { UpdateCustomer } from './components/customers/update-customer/update-customer';
+import { FormsModule } from '@angular/forms';
+import {ListBills} from './components/bills/list-bills/list-bills';
+import {AddBill} from './components/bills/add-bill/add-bill';
+import {BillDetails} from './components/bills/bill-details/bill-details';
 
 function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
     keycloak.init({
       config: {
         url: 'http://localhost:8080',
-        realm: 'realm-test',
-        clientId: 'facturation-frontend-app'
+        realm: 'tp-facturation-realm',
+        clientId: 'tp-facturation-angular-frontend-client'
       },
       initOptions: {
         onLoad: 'login-required',
@@ -35,6 +39,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
       },
     });
 }
+
 
 @NgModule({
   declarations: [
@@ -45,7 +50,11 @@ function initializeKeycloak(keycloak: KeycloakService) {
     Navbar,
     ListCustomers,
     AddCustomer,
-    UpdateCustomer
+    UpdateCustomer,
+    ListBills,
+    AddBill,
+    BillDetails
+
   ],
   imports: [
     BrowserModule,
@@ -53,7 +62,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
     RouterModule,
     HttpClientModule,
     KeycloakAngularModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

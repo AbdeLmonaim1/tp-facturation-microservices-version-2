@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Product} from '../interfacess/product';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Product } from '../interfacess/product';
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +10,20 @@ export class ProductService {
   private API_URL = 'http://localhost:8888/inventory-service/api/products';
   constructor(private http: HttpClient) {
   }
-  getAllProductsInStock():Observable<Product[]> {
+  getAllProductsInStock(): Observable<Product[]> {
     return this.http.get<Product[]>(this.API_URL);
   }
   addProduct(product: Product): Observable<Product> {
     return this.http.post<Product>(this.API_URL, product);
+  }
+  getProductById(id: string): Observable<Product> {
+    return this.http.get<Product>(`${this.API_URL}/${id}`);
+  }
+  updateProduct(id: string, product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.API_URL}/${id}`, product);
+  }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
   }
 }

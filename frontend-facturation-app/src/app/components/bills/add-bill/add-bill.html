@@ -1,0 +1,113 @@
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-gradient-success text-white">
+            <h3 class="mb-0"><i class="bi bi-plus-circle"></i> Create New Bill</h3>
+        </div>
+        <div class="card-body">
+            <!-- Success Message -->
+            <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+            </div>
+
+            <form>
+                <!-- Customer Selection -->
+                <div class="mb-4">
+                    <label for="customer" class="form-label"><strong>Select Customer</strong> <span
+                            class="text-danger">*</span></label>
+                    <select id="customer" class="form-select form-select-lg" [(ngModel)]="selectedCustomerId"
+                        name="customer" [class.is-invalid]="selectedCustomerId === 0">
+                        <option [value]="0">-- Select a Customer --</option>
+                        <option *ngFor="let customer of customers" [value]="customer.id">
+                            {{ customer.name }} ({{ customer.email }})
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Product Items Section -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label mb-0"><strong>Product Items</strong> <span
+                                class="text-danger">*</span></label>
+                        <button type="button" class="btn btn-sm btn-primary" (click)="addProductItem()">
+                            <i class="bi bi-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40%;">Product</th>
+                                    <th style="width: 20%;">Quantity</th>
+                                    <th style="width: 20%;">Unit Price</th>
+                                    <th style="width: 15%;">Total</th>
+                                    <th style="width: 5%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of productItems; let i = index" class="product-item-row">
+                                    <td>
+                                        <select class="form-select" [(ngModel)]="item.productId" [name]="'product-' + i"
+                                            (change)="onProductChange(i)" [class.is-invalid]="!item.productId">
+                                            <option value="">-- Select Product --</option>
+                                            <option *ngFor="let product of products" [value]="product.id">
+                                                {{ product.name }} (Stock: {{ product.quantity }})
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" [(ngModel)]="item.quantity"
+                                            [name]="'quantity-' + i" min="1" [class.is-invalid]="item.quantity <= 0">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control" [(ngModel)]="item.unitPrice"
+                                            [name]="'price-' + i" step="0.01" readonly>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">{{ calculateItemTotal(item) | number:'1.2-2' }}
+                                            MAD</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                            (click)="removeProductItem(i)" [disabled]="productItems.length === 1">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Grand Total:</strong></td>
+                                    <td colspan="2">
+                                        <strong class="text-success fs-5">{{ calculateGrandTotal() | number:'1.2-2' }}
+                                            MAD</strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="loading">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" (click)="createBill()"
+                        [disabled]="!isFormValid() || loading">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                        <i *ngIf="!loading" class="bi bi-check-circle"></i>
+                        {{ loading ? 'Creating...' : 'Create Bill' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

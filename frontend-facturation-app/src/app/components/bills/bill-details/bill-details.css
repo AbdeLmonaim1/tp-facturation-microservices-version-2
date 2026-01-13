@@ -1,0 +1,66 @@
+.bg-gradient-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bill-container {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.info-section {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.info-section p {
+    margin-bottom: 0.5rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .bill-container {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+    }
+
+    .card-header {
+        background: #667eea !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body {
+        background: white !important;
+    }
+}
