@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { Product } from '../../../interfacess/product';
 import { ProductService } from '../../../services/product-service';
 
@@ -17,7 +18,8 @@ export class ProductList implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -27,18 +29,21 @@ export class ProductList implements OnInit {
   loadProducts(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.productService.getAllProductsInStock().subscribe({
-      next: data => {
-        this.products = data;
+    this.productService.getAllProductsInStock()
+      .pipe(finalize(() => {
         this.loading = false;
-        console.log("All Products in stock => ", this.products);
-      },
-      error: err => {
-        console.log(err);
-        this.errorMessage = 'Failed to load products.';
-        this.loading = false;
-      }
-    });
+        this.cdr.detectChanges(); // Ensure view updates when loading finishes
+      }))
+      .subscribe({
+        next: data => {
+          this.products = data;
+          console.log("All Products in stock => ", this.products);
+        },
+        error: err => {
+          console.log(err);
+          this.errorMessage = 'Failed to load products.';
+        }
+      });
   }
 
   editProduct(id: string | undefined): void {

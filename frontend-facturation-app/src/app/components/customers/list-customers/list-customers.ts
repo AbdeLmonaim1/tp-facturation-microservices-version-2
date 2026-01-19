@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { Customer } from '../../../interfacess/customer';
 import { CustomerService } from '../../../services/customer-service';
 
@@ -17,7 +18,8 @@ export class ListCustomers implements OnInit {
 
   constructor(
     private customerService: CustomerService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -27,18 +29,21 @@ export class ListCustomers implements OnInit {
   loadCustomers(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.customerService.getAllCustomers().subscribe({
-      next: data => {
-        this.customers = data;
+    this.customerService.getAllCustomers()
+      .pipe(finalize(() => {
         this.loading = false;
-        console.log("All Customers => ", this.customers);
-      },
-      error: err => {
-        console.log(err);
-        this.errorMessage = 'Failed to load customers.';
-        this.loading = false;
-      }
-    });
+        this.cdr.detectChanges();
+      }))
+      .subscribe({
+        next: data => {
+          this.customers = data;
+          console.log("All Customers => ", this.customers);
+        },
+        error: err => {
+          console.log(err);
+          this.errorMessage = 'Failed to load customers.';
+        }
+      });
   }
 
   editCustomer(id: number | undefined): void {

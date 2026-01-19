@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { BillingService } from '../../../services/billing-service';
 import { Bill } from '../../../interfacess/bill';
 
@@ -16,7 +17,8 @@ export class ListBills implements OnInit {
 
     constructor(
         private billingService: BillingService,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -26,17 +28,20 @@ export class ListBills implements OnInit {
     loadBills(): void {
         this.loading = true;
         this.errorMessage = '';
-        this.billingService.getAllBills().subscribe({
-            next: (data) => {
-                this.bills = data;
+        this.billingService.getAllBills()
+            .pipe(finalize(() => {
                 this.loading = false;
-            },
-            error: (error) => {
-                console.error('Error loading bills:', error);
-                this.errorMessage = 'Failed to load bills. Please try again.';
-                this.loading = false;
-            }
-        });
+                this.cdr.detectChanges();
+            }))
+            .subscribe({
+                next: (data) => {
+                    this.bills = data;
+                },
+                error: (error) => {
+                    console.error('Error loading bills:', error);
+                    this.errorMessage = 'Failed to load bills. Please try again.';
+                }
+            });
     }
 
     viewBillDetails(id: number | undefined): void {

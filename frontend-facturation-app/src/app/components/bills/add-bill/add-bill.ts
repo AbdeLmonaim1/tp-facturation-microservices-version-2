@@ -14,10 +14,10 @@ interface ProductItemForm {
 }
 
 @Component({
-  selector: 'add-bill',
-  standalone: false,
-  templateUrl: './add-bill.html',
-  styleUrls: ['./add-bill.css']
+    selector: 'add-bill',
+    standalone: false,
+    templateUrl: './add-bill.html',
+    styleUrls: ['./add-bill.css']
 })
 export class AddBill implements OnInit {
     customers: Customer[] = [];
@@ -131,9 +131,7 @@ export class AddBill implements OnInit {
             next: (response) => {
                 this.successMessage = 'Bill created successfully!';
                 this.loading = false;
-                setTimeout(() => {
-                    this.router.navigate(['/bills']);
-                }, 1500);
+                this.router.navigate(['/bills']);
             },
             error: (error) => {
                 console.error('Error creating bill:', error);
