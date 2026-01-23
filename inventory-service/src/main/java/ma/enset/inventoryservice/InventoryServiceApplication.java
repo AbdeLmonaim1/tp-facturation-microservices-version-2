@@ -15,7 +15,7 @@ public class InventoryServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(InventoryServiceApplication.class, args);
     }
-    @Bean
+//    @Bean
     CommandLineRunner start(ProductRepository repository) {
         return args -> {
             repository.save(new Product(UUID.randomUUID().toString(), "Samsung S25 Ultra", 18450.50, 22));

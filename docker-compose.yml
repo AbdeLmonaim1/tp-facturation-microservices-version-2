@@ -31,6 +31,26 @@ services:
     depends_on:
       enset-discovery-service:
         condition: service_healthy
+  postgres-inventory-service:
+    image: postgres:16-alpine
+    container_name: postgres-inventory-service
+    volumes:
+      - postgres_inventory_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: monaim
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - '5433:5432'
+    expose:
+      - '5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U monaim"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
   enset-inventory-service:
     build: ./inventory-service
     container_name: enset-inventory-service
@@ -48,11 +68,36 @@ services:
       - CONFIG_SERVER_URL=http://enset-config-server:9999
       - KEYCLOAK_ISSUER_URL=http://localhost:8080/realms/tp-facturation-realm
       - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory-service:5432/product_db
+      - SPRING_DATASOURCE_USERNAME=monaim
+      - SPRING_DATASOURCE_PASSWORD=1234
     depends_on:
         enset-config-server:
             condition: service_healthy
+        postgres-inventory-service:
+          condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  postgres-customer-service:
+    image: postgres:16-alpine
+    container_name: postgres-customer-service
+    volumes:
+      - postgres_customer_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: customer_db
+      POSTGRES_USER: monaim
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - '5434:5432'
+    expose:
+      - '5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h localhost -U monaim" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
   enset-customer-service:
     build: ./customer-service
     container_name: enset-customer-service
@@ -70,11 +115,36 @@ services:
       - CONFIG_SERVER_URL=http://enset-config-server:9999
       - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
       - KEYCLOAK_ISSUER_URI=http://localhost:8080/realms/tp-facturation-realm
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-customer-service:5432/customer_db
+      - SPRING_DATASOURCE_USERNAME=monaim
+      - SPRING_DATASOURCE_PASSWORD=1234
     depends_on:
         enset-config-server:
             condition: service_healthy
+        postgres-customer-service:
+          condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  postgres-billing-service:
+    image: postgres:16-alpine
+    container_name: postgres-billing-service
+    volumes:
+      - postgres_billing_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: billing_db
+      POSTGRES_USER: monaim
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - '5435:5432'
+    expose:
+      - '5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -h localhost -U monaim" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
   enset-billing-service:
     build: ./billing-service
     container_name: enset-billing-service
@@ -87,10 +157,15 @@ services:
       - CONFIG_SERVER_URL=http://enset-config-server:9999
       - KEYCLOAK_SET_URI=http://keycloak:8080/realms/tp-facturation-realm/protocol/openid-connect/certs
       - KEYCLOAK_ISSUER_URI=http://localhost:8080/realms/tp-facturation-realm
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-billing-service:5432/billing_db
+      - SPRING_DATASOURCE_USERNAME=monaim
+      - SPRING_DATASOURCE_PASSWORD=1234
     depends_on:
       enset-customer-service:
         condition: service_healthy
       enset-inventory-service:
+        condition: service_healthy
+      postgres-billing-service:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -180,3 +255,6 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
+  postgres_inventory_data:
+  postgres_customer_data:
+  postgres_billing_data:
