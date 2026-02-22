@@ -203,7 +203,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: k1234
     ports:
-      - '5432:5432'
+      - '5436:5432'
     expose:
       - '5432'
     healthcheck:
